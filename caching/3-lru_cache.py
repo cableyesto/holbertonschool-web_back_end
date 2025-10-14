@@ -36,7 +36,6 @@ class LRUCache(BaseCaching):
         else:
             self.__push_last_modified_at_top_key_weight_stack(key)
 
-        # print(self.key_weight_stack)
         self.cache_data.update({key: item})
 
         if len(self.cache_data) > BaseCaching.MAX_ITEMS:
