@@ -3,6 +3,8 @@
 
 import re
 import logging
+import os
+import mysql.connector
 
 PII_FIELDS = (
     'name',
@@ -43,9 +45,37 @@ class RedactingFormatter(logging.Formatter):
 
 def get_logger() -> logging.Logger:
     """ Return a logger """
-    streamHandler = logging.StreamHandler(RedactingFormatter(PII_FIELDS))
+    streamHandler = logging.StreamHandler()
+    streamHandler.setStream(RedactingFormatter(PII_FIELDS))
     logger = logging.getLogger("user_data")
     logger.propagate = False
     logger.addHandler(streamHandler)
     logger.setLevel(logging.INFO)
     return logger
+
+
+def get_db():
+    """ Return a db connection """
+    db_username = os.environ["PERSONAL_DATA_DB_USERNAME"]
+    db_pass = os.environ["PERSONAL_DATA_DB_PASSWORD"]
+    db_host = os.environ["PERSONAL_DATA_DB_HOST"]
+    db_name = os.environ["PERSONAL_DATA_DB_NAME"]
+    config = {
+        'user': db_username,
+        'password': db_pass,
+        'host': db_host,
+        'database': db_name,
+    }
+
+    try:
+        cnx = mysql.connector.connect(**config)
+        return cnx
+    except mysql.connector.Error as err:
+        if err.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == mysql.connector.errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        cnx.close()
