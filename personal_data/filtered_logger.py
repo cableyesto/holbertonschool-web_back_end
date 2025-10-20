@@ -4,6 +4,14 @@
 import re
 import logging
 
+PII_FIELDS = (
+    'name',
+    'email',
+    'phone',
+    'ssn',
+    'password'
+)
+
 
 def filter_datum(fields, redaction, message, separator):
     """Filter datum to obfuscate field"""
@@ -31,3 +39,13 @@ class RedactingFormatter(logging.Formatter):
         log = logging.LogRecord("my_logger", logging.INFO, None, None,
                                 res, None, None)
         return super().format(log)
+
+
+def get_logger() -> logging.Logger:
+    """ Return a logger """
+    streamHandler = logging.StreamHandler(RedactingFormatter(PII_FIELDS))
+    logger = logging.getLogger("user_data")
+    logger.propagate = False
+    logger.addHandler(streamHandler)
+    logger.setLevel(logging.INFO)
+    return logger
