@@ -43,11 +43,11 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """ Format function obfuscating fields """
-        print(record)
         res = filter_datum(self.fields, '***', re.sub(r';', '; ',
                            record.getMessage()), ';')
         log = logging.LogRecord("my_logger", logging.INFO, None, None,
                                 res, None, None)
+        print("correct output")
         return super().format(log)
 
 
