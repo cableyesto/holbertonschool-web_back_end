@@ -2,6 +2,7 @@
 """ Filtered Logger Script """
 
 import re
+import typing
 import logging
 import os
 import mysql.connector
@@ -15,7 +16,7 @@ PII_FIELDS = (
 )
 
 
-def filter_datum(fields: list[str], redaction: str, message: str, separator: str) -> str:
+def filter_datum(fields: typing.List[str], redaction: str, message: str, separator: str) -> str:
     """Filter datum to obfuscate field"""
     res = message
     for field in fields:
