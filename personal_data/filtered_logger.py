@@ -45,9 +45,9 @@ class RedactingFormatter(logging.Formatter):
         """ Format function obfuscating fields """
         res = filter_datum(self.fields, '***',
                            re.sub(r';', '; ', record.getMessage()), ';')
-        log = logging.LogRecord("my_logger", logging.INFO, None, None,
+        log = logging.LogRecord("user_name", logging.INFO, None, None,
                                 res, None, None)
-        print("correct output")
+        # print("correct output")
         return super().format(log)
 
 
@@ -87,3 +87,21 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
             print(err)
     else:
         cnx.close()
+
+
+def main():
+    """ Execute the main function """
+    logger = get_logger()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    field_names = [i[0] for i in cursor.description]
+    for row in cursor:
+        message = ";".join(f"{k}={v}" for k, v in zip(field_names, row))
+        logger.info(message)
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
