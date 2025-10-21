@@ -16,7 +16,11 @@ PII_FIELDS = (
 )
 
 
-def filter_datum(fields: typing.List[str], redaction: str, message: str, separator: str) -> str:
+def filter_datum(fields: typing.List[str],
+                 redaction: str,
+                 message: str,
+                 separator: str
+                 ) -> str:
     """Filter datum to obfuscate field"""
     res = message
     for field in fields:
