@@ -43,8 +43,8 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """ Format function obfuscating fields """
-        res = filter_datum(self.fields, '***', re.sub(r';', '; ',
-                           record.getMessage()), ';')
+        res = filter_datum(self.fields, '***',
+                           re.sub(r';', '; ', record.getMessage()), ';')
         log = logging.LogRecord("my_logger", logging.INFO, None, None,
                                 res, None, None)
         print("correct output")
@@ -54,7 +54,6 @@ class RedactingFormatter(logging.Formatter):
 def get_logger() -> logging.Logger:
     """ Return a logger """
     streamHandler = logging.StreamHandler()
-    # streamHandler.setStream(RedactingFormatter(PII_FIELDS))
     streamHandler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger = logging.getLogger("user_data")
     logger.propagate = False
