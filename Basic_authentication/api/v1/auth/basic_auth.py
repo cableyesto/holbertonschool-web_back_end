@@ -4,6 +4,8 @@
 from api.v1.auth.auth import Auth
 from re import search
 from base64 import b64encode, b64decode
+from typing import TypeVar
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -64,3 +66,29 @@ class BasicAuth(Auth):
         else:
             split = decoded_base64_authorization_header.split(":")
             return (split[0], split[1])
+
+    def user_object_from_credentials(self,
+                                     user_email: str,
+                                     user_pwd: str
+                                     ) -> TypeVar('User'):
+        """ Return user object """
+        if user_email is None or type(user_email) is not str:
+            return None
+
+        if user_pwd is None or type(user_pwd) is not str:
+            return None
+
+        user = User()
+        user_empty = user.count()
+        if user.count() < 1:
+            return None
+
+        user_presence = user.search({"email": "{}".format(user_email)})
+        if len(user_presence) < 1:
+            return None
+
+        user_matching_email = user_presence.pop()
+        if user_matching_email.is_valid_password(user_pwd) is False:
+            return None
+        else:
+            return user_matching_email
