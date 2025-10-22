@@ -58,15 +58,12 @@ def filter_request() -> str:
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
-    auth = getenv("AUTH_TYPE")
-    print("AUTH_TYPE:", getenv("AUTH_TYPE"))
-    print("auth after setting:", auth)
+    auth = getenv("AUTH_TYPE", "auth")
     if auth == "auth":
         from api.v1.auth.auth import Auth
         auth = Auth()
     elif auth == "basic_auth":
         from api.v1.auth.basic_auth import BasicAuth
-        print("BasicAuth imported successfully")
         auth = BasicAuth()
 
     app.run(host=host, port=port)
