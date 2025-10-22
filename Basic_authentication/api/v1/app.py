@@ -45,7 +45,7 @@ def filter_request() -> str:
                         '/api/v1/forbidden/'
                      ]
     if auth is None:
-        return
+        pass
 
     if auth.require_auth(request.path, excluded_paths) is True:
         if auth.authorization_header(request) is None:
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     if auth == "auth":
         from api.v1.auth.auth import Auth
         auth = Auth()
-    if auth == "basic_auth":
+    elif auth == "basic_auth":
         from api.v1.auth.basic_auth import BasicAuth
         auth = BasicAuth()
 
