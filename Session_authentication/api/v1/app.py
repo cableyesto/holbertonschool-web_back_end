@@ -42,23 +42,21 @@ def unauthorized(error) -> str:
 def filter_request() -> str:
     """ Filter every requests """
     excluded_paths = [
-                        '/api/v1/status/',
-                        '/api/v1/unauthorized/',
-                        '/api/v1/forbidden/'
-                     ]
-    if auth is None:
-        pass
+        '/api/v1/status/',
+        '/api/v1/unauthorized/',
+        '/api/v1/forbidden/'
+    ]
 
-    if auth.require_auth(request.path, excluded_paths) is True:
+    if auth is None:
+        return
+
+    if auth.require_auth(request.path, excluded_paths):
         if auth.authorization_header(request) is None:
             abort(401)
 
-        current_user = auth.current_user(request)
         request.current_user = auth.current_user(request)
-        if current_user is None:
+        if request.current_user is None:
             abort(403)
-        else:
-            return jsonify([current_user.to_json()]), 200
 
 
 if __name__ == "__main__":
