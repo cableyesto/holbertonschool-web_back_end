@@ -54,6 +54,7 @@ def filter_request() -> str:
             abort(401)
 
         current_user = auth.current_user(request)
+        request.current_user = auth.current_user(request)
         if current_user is None:
             abort(403)
         else:
