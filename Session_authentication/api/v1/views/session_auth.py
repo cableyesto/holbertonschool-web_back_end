@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Session authentication routes"""
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from os import getenv
 from models.user import User
 from api.v1.views import app_views
@@ -50,3 +50,29 @@ def login() -> str:
     response = jsonify(user.to_json())
     response.set_cookie(session_name, session_id)
     return response, 200
+
+
+@app_views.route(
+    '/auth_session/logout',
+    methods=['DELETE'],
+    strict_slashes=False
+)
+def logout() -> str:
+    """Login route for session authentication"""
+
+    # Import auth where needed
+    from api.v1.app import auth
+
+    # Lazy fallback: if auth is None, dynamically assign SessionAuth
+    if auth is None:
+        from api.v1.auth.session_auth import SessionAuth
+        # monkey-patch auth variable in api.v1.app
+        import sys
+        sys.modules['api.v1.app'].auth = SessionAuth()
+        auth = sys.modules['api.v1.app'].auth
+
+    res = auth.destroy_session(request)
+    if res is False:
+        abort(404)
+    else:
+        return jsonify({}), 200
