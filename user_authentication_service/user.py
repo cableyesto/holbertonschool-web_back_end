@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('sqlite:///users.db')
 
 Base = declarative_base()
 
@@ -14,6 +13,7 @@ Base = declarative_base()
 class User(Base):
     """ User Model Class """
     __tablename__ = 'users'
+    __table_args__ = {'sqlite_autoincrement': True}
     id = Column(Integer, primary_key=True)
     email = Column(String(250), nullable=False)
     hashed_password = Column(String(250), nullable=False)
