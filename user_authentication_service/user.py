@@ -19,3 +19,15 @@ class User(Base):
     hashed_password = Column(String(250), nullable=False)
     session_id = Column(String(250), nullable=True)
     reset_token = Column(String(250), nullable=True)
+
+    def __repr__(self):
+        """ String representation User object """
+        return (
+            "<User(id={}, email='{}', session_id='{}', reset_token='{}')>"
+            .format(
+                self.id,
+                self.email,
+                self.session_id,
+                self.reset_token
+            )
+        )
