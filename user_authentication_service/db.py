@@ -64,21 +64,22 @@ class DB:
         return user_found
 
     def update_user(self, user_id: int, **kwargs):
-        try:
-            user_keys = []
-            for column in User.__table__.columns.keys():
-                user_keys.append(column)
+        """ Update the user """
+        user_keys = []
+        for column in User.__table__.columns.keys():
+            user_keys.append(column)
 
-            invalid = set(kwargs.keys()) - set(user_keys)
-            if invalid:
-                raise InvalidRequestError
-
-            user = self.find_user_by(id=user_id)
-            session = self._session
-            args = list(kwargs.keys())
-            for arg in args:
-                setattr(user, arg, kwargs[arg])
-            session.commit()
-
-        except InvalidRequestError:
+        invalid = set(kwargs.keys()) - set(user_keys)
+        if invalid:
             raise ValueError
+
+        user = self.find_user_by(id=user_id)
+        if not user:
+            return None
+
+        args = list(kwargs.keys())
+        for arg in args:
+            setattr(user, arg, kwargs[arg])
+
+        session = self._session
+        session.commit()
