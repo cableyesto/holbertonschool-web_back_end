@@ -60,6 +60,6 @@ class Auth:
             uuid = _generate_uuid()
             self._db.update_user(user.id, session_id=uuid)
             return user.session_id
-        
+
         except NoResultFound:
             return None
