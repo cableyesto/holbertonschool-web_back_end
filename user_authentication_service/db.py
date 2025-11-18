@@ -65,6 +65,14 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs):
         try:
+            user_keys = []
+            for column in User.__table__.columns.keys():
+                user_keys.append(column)
+
+            invalid = set(kwargs.keys()) - set(user_keys)
+            if invalid:
+                raise InvalidRequestError
+
             session = self._session
             arg = list(kwargs.keys())
             first_arg = arg[0]
