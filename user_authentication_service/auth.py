@@ -2,7 +2,7 @@
 """
 Auth module
 """
-from bcrypt import gensalt, hashpw
+from bcrypt import gensalt, hashpw, checkpw
 from uuid import uuid4
 from db import DB
 from sqlalchemy.orm.exc import NoResultFound
@@ -42,3 +42,13 @@ class Auth:
 
             new_user = self._db.add_user(email, hashed_password)
             return new_user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """ Verify the login credentials """
+        try:
+            user = self._db.find_user_by(email=email)
+            pw_encoded = password.encode('utf-8')
+            return checkpw(pw_encoded, user.hashed_password)
+
+        except NoResultFound:
+            return False
