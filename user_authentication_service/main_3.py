@@ -22,3 +22,14 @@ try:
     print("Password updated")
 except ValueError:
     print("Error")
+
+try:
+    my_db.update_user(user.id, hashed_password2='NewPwd')
+except ValueError:
+    print("Error")
+
+try:
+    my_db.update_user(user.id, hashed_password='NewPwd2', session_id='bob')
+    print("Password and session_id updated")
+except ValueError:
+    print("Error")

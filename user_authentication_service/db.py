@@ -73,15 +73,12 @@ class DB:
             if invalid:
                 raise InvalidRequestError
 
-            session = self._session
-            arg = list(kwargs.keys())
-            first_arg = arg[0]
-
             user = self.find_user_by(id=user_id)
-
-            setattr(user, first_arg, kwargs[first_arg])
+            session = self._session
+            args = list(kwargs.keys())
+            for arg in args:
+                setattr(user, arg, kwargs[arg])
             session.commit()
-            return None
 
         except InvalidRequestError:
             raise ValueError
