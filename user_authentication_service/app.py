@@ -5,6 +5,7 @@ App module
 from flask import Flask, jsonify, request, abort, redirect
 from auth import Auth
 from user import User
+from uuid import UUID
 
 app = Flask(__name__)
 AUTH = Auth()
@@ -58,6 +59,25 @@ def logout():
 
     AUTH.destroy_session(user.id)
     return redirect("/")
+
+
+@app.route("/profile", methods=["GET"])
+def profile():
+    """ Get user profile """
+    session_id_request = request.cookies.get('session_id')
+
+    if not session_id_request:
+        abort(400)
+
+    try:
+        obj = UUID(session_id_request)
+    except ValueError:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id_request)
+    if not user:
+        abort(403)
+    return jsonify({"email": user.email}), 200
 
 
 if __name__ == "__main__":
