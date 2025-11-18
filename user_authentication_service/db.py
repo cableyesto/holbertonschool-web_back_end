@@ -81,6 +81,7 @@ class DB:
 
             setattr(user, first_arg, kwargs[first_arg])
             session.commit()
+            return None
 
         except InvalidRequestError:
             raise ValueError
