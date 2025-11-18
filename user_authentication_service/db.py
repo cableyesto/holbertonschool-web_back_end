@@ -75,7 +75,7 @@ class DB:
 
         user = self.find_user_by(id=user_id)
         if not user:
-            return None
+            raise ValueError
 
         args = list(kwargs.keys())
         for arg in args:
