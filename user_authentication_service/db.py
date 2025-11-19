@@ -73,8 +73,9 @@ class DB:
         if invalid:
             raise ValueError
 
-        user = self.find_user_by(id=user_id)
-        if not user:
+        try:
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
             raise ValueError
 
         args = list(kwargs.keys())
