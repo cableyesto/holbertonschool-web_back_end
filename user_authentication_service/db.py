@@ -65,21 +65,14 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs):
         """ Update the user """
-        user_keys = []
-        for column in User.__table__.columns.keys():
-            user_keys.append(column)
-
-        invalid = set(kwargs.keys()) - set(user_keys)
-        if invalid:
+        try:
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
             raise ValueError
 
-        user = self.find_user_by(id=user_id)
-        if not user:
-            raise ValueError
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError
+            setattr(user, key, value)
 
-        args = list(kwargs.keys())
-        for arg in args:
-            setattr(user, arg, kwargs[arg])
-
-        session = self._session
-        session.commit()
+        self._session.commit()
