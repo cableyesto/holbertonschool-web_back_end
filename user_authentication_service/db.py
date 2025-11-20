@@ -67,7 +67,7 @@ class DB:
         """ Update the user """
         for key, value in kwargs.items():
             if not hasattr(User, key):
-                raise ValueError(f"Invalid column name: {key}")
+                raise ValueError
 
         user = self.find_user_by(id=user_id)
 
