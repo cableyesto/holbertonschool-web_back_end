@@ -71,10 +71,12 @@ class DB:
             if key not in valid_columns:
                 raise ValueError
 
-        try:
-            user = self.find_user_by(id=user_id)
-        except NoResultFound:
-            raise ValueError
+        # try:
+        #     user = self.find_user_by(id=user_id)
+        # except NoResultFound:
+        #     raise ValueError
+
+        user = self.find_user_by(id=user_id)
 
         for key, value in kwargs.items():
             setattr(user, key, value)
