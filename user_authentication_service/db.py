@@ -63,12 +63,8 @@ class DB:
 
         return user_found
 
-    def update_user(self, user_id: int, **kwargs):
+    def update_user(self, user_id: int, **kwargs) -> None:
         """ Update the user """
-        # for key, value in kwargs.items():
-        #     if not hasattr(User, key):
-        #         raise ValueError
-
         user = self.find_user_by(id=user_id)
 
         for key, value in kwargs.items():
