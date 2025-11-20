@@ -65,16 +65,9 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs):
         """ Update the user """
-
-        valid_columns = set(User.__table__.columns.keys())
-        for key in kwargs:
-            if key not in valid_columns:
-                raise ValueError
-
-        # try:
-        #     user = self.find_user_by(id=user_id)
-        # except NoResultFound:
-        #     raise ValueError
+        for key, value in kwargs.items():
+            if not hasattr(User, key):
+                raise ValueError(f"Invalid column name: {key}")
 
         user = self.find_user_by(id=user_id)
 
