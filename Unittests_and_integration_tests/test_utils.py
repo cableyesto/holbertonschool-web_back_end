@@ -7,7 +7,8 @@ from parameterized import parameterized
 from utils import (
     access_nested_map,
     get_json,
-    requests
+    requests,
+    memoize
 )
 from typing import (
     Mapping,
@@ -64,6 +65,28 @@ class TestGetJson(unittest.TestCase):
 
         mock_get.assert_called_once_with(url)
         self.assertEqual(res, expected)
+
+
+class TestMemoize(unittest.TestCase):
+    """ Unit test memoize """
+    def test_memoize(self):
+        """ Test memoize function """
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method') as mock_function:
+            mock_function.return_value = 42
+            my_object = TestClass()
+            res1 = my_object.a_property
+            self.assertEqual(res1, 42)
+            res2 = my_object.a_property
+            self.assertEqual(res1, 42)
+            mock_function.assert_called_once()
 
 
 if __name__ == '__main__':
