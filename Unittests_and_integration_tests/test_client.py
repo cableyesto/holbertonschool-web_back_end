@@ -42,6 +42,33 @@ class TestGithubOrgClient(unittest.TestCase):
 
             self.assertEqual(res, repos_url_str)
 
+    @patch('client.get_json')
+    def test_public_repos(self, mock_json) -> None:
+        """ Unit test public repos """
+        repos_url_str = "https://api.github.com/orgs/google/repos"
+        mock_json.return_value = [
+            {"name": "episodes.dart"},
+            {"name": "cpp-netlib"}
+        ]
+
+        with patch(
+            'client.GithubOrgClient._public_repos_url',
+            new_callable=PropertyMock
+        ) as mock_public:
+            mock_public.return_value = repos_url_str
+            repos_list_expected = [
+                "episodes.dart",
+                "cpp-netlib"
+            ]
+
+            instance = GithubOrgClient('google')
+            res = instance.public_repos()
+
+            self.assertEqual(res, repos_list_expected)
+            mock_public.assert_called_once()
+
+        mock_json.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()
