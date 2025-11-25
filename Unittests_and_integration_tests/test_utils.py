@@ -52,17 +52,17 @@ class TestAccessNestedMap(unittest.TestCase):
         ("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False})
     ])
-    def test_get_json(self, url: str, expected: Any) -> None:
-        with patch.object(requests, "get") as mock_requests:
-            mock_response = Mock()
-            mock_requests.return_value = mock_response
+    @patch.object(requests, "get")
+    def test_get_json(self, url: str, expected: Any, mock_get) -> None:
+        mock_response = Mock()
+        mock_get.return_value = mock_response
 
-            mock_response.json.return_value = expected
+        mock_response.json.return_value = expected
 
-            res = get_json(url)
+        res = get_json(url)
 
-            mock_requests.assert_called_once_with(url)
-            self.assertEqual(res, expected)
+        mock_get.assert_called_once_with(url)
+        self.assertEqual(res, expected)
 
 
 if __name__ == '__main__':
