@@ -2,8 +2,13 @@
 """ Unit tests and integration tests module"""
 
 import unittest
+from unittest.mock import Mock, patch
 from parameterized import parameterized
-from utils import access_nested_map
+from utils import (
+    access_nested_map,
+    get_json,
+    requests
+)
 from typing import (
     Mapping,
     Sequence,
@@ -39,6 +44,25 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), str(expected))
+
+
+class TestAccessNestedMap(unittest.TestCase):
+    """ Unit test get_json """
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False})
+    ])
+    def test_get_json(self, url: str, expected: Any) -> None:
+        with patch.object(requests, "get") as mock_requests:
+            mock_response = Mock()
+            mock_requests.return_value = mock_response
+
+            mock_response.json.return_value = expected
+
+            res = get_json(url)
+
+            mock_requests.assert_called_once_with(url)
+            self.assertEqual(res, expected)
 
 
 if __name__ == '__main__':
