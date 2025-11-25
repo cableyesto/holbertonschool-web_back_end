@@ -86,39 +86,50 @@ class TestGithubOrgClient(unittest.TestCase):
 
 
 def extract_repo_names(repos):
-    """Helper function to extract repository names from repo dicts."""
     return [repo["name"] for repo in repos]
 
 
 def filter_repos_by_license(repos, license_key):
-    """Helper function to filter repositories by license key."""
-    return [repo["name"] for repo in repos if repo.get("license")
-            and repo["license"]["key"] == license_key]
+    return [
+        repo["name"] for repo in repos
+        if repo.get("license") and repo["license"]["key"] == license_key
+    ]
 
-# Build parameter tuples including all required names
+
+# Build PARAMS including all five required names
 PARAMS = []
 for item in TEST_PAYLOAD:
-    org_data = item[0]
-    repos_data = item[1]
-    expected = [repo["name"] for repo in repos_data]
-    apache = [repo["name"] for repo in repos_data
-              if repo.get("license") and repo["license"]["key"] == "apache-2.0"]
-    PARAMS.append((org_data, repos_data, expected, apache, item))
+    org_payload = item[0]
+    repos_payload = item[1]
+    expected_repos = extract_repo_names(repos_payload)
+    apache2_repos = filter_repos_by_license(repos_payload, "apache-2.0")
+    PARAMS.append(
+        (org_payload,
+         repos_payload,
+         expected_repos,
+         apache2_repos,
+         item)
+    )
 
-# Decorate class with all five parameter names
+
 @parameterized_class(
-    ("org_payload", "repos_payload", "expected_repos", "apache2_repos", "TEST_PAYLOAD"),
+    ("org_payload",
+     "repos_payload",
+     "expected_repos",
+     "apache2_repos",
+     "TEST_PAYLOAD"),
     PARAMS
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos"""
+
     @classmethod
     def setUpClass(cls):
         """Patch requests.get to return fixture payloads."""
         cls.get_patcher = patch("utils.requests.get")
         cls.mock_get = cls.get_patcher.start()
 
-        # Side effect to return correct JSON depending on URL
+        # Configure side_effect depending on URL
         def get_side_effect(url, *args, **kwargs):
             mock_response = Mock()
             if url == cls.org_payload["repos_url"]:
