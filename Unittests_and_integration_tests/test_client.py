@@ -95,56 +95,55 @@ def filter_repos_by_license(repos, license_key):
     return [repo["name"] for repo in repos if repo.get("license")
             and repo["license"]["key"] == license_key]
 
+# Build parameter tuples including all required names
+PARAMS = []
+for item in TEST_PAYLOAD:
+    org_data = item[0]
+    repos_data = item[1]
+    expected = [repo["name"] for repo in repos_data]
+    apache = [repo["name"] for repo in repos_data
+              if repo.get("license") and repo["license"]["key"] == "apache-2.0"]
+    PARAMS.append((org_data, repos_data, expected, apache, item))
 
+# Decorate class with all five parameter names
 @parameterized_class(
-    ("org_data", "repos_data"),
-    TEST_PAYLOAD
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos", "TEST_PAYLOAD"),
+    PARAMS
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """ Integration test for public_repos """
+    """Integration tests for GithubOrgClient.public_repos"""
     @classmethod
     def setUpClass(cls):
         """Patch requests.get to return fixture payloads."""
         cls.get_patcher = patch("utils.requests.get")
         cls.mock_get = cls.get_patcher.start()
 
-        # Side effect to return the correct payload based on URL
+        # Side effect to return correct JSON depending on URL
         def get_side_effect(url, *args, **kwargs):
             mock_response = Mock()
-            if url == cls.org_data["repos_url"]:
-                mock_response.json.return_value = cls.repos_data
+            if url == cls.org_payload["repos_url"]:
+                mock_response.json.return_value = cls.repos_payload
             elif url.startswith("https://api.github.com/orgs/"):
-                mock_response.json.return_value = cls.org_data
+                mock_response.json.return_value = cls.org_payload
             else:
                 mock_response.json.return_value = {}
             return mock_response
 
         cls.mock_get.side_effect = get_side_effect
 
-        # Precompute expected results
-        cls.expected_repos = extract_repo_names(cls.repos_data)
-        cls.apache2_repos = filter_repos_by_license(
-            cls.repos_data,
-            "apache-2.0"
-        )
-
     @classmethod
     def tearDownClass(cls):
-        """Stop patcher to clean up."""
+        """Stop patcher."""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """Test that public_repos returns the correct repository names."""
-        client = GithubOrgClient(self.org_data["repos_url"].split("/")[-2])
+        """Return all public repo names."""
+        client = GithubOrgClient(self.org_payload["repos_url"].split("/")[-2])
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
-        """Test that public_repos filters repositories by license."""
-        client = GithubOrgClient(self.org_data["repos_url"].split("/")[-2])
+        """Return repos filtered by license."""
+        client = GithubOrgClient(self.org_payload["repos_url"].split("/")[-2])
         apache_repos = client.public_repos(license="apache-2.0")
         self.assertEqual(apache_repos, self.apache2_repos)
-
-
-if __name__ == '__main__':
-    unittest.main()
