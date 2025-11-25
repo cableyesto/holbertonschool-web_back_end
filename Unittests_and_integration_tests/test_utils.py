@@ -54,6 +54,7 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     @patch('requests.get')
     def test_get_json(self, url: str, expected: Any, mock_get) -> None:
+        """ Function to test json """
         mock_response = Mock()
         mock_get.return_value = mock_response
 
