@@ -52,7 +52,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False})
     ])
-    @patch.object(requests, "get")
+    @patch('requests.get')
     def test_get_json(self, url: str, expected: Any, mock_get) -> None:
         mock_response = Mock()
         mock_get.return_value = mock_response
