@@ -53,6 +53,7 @@ def before_request():
     user = get_user(user_id)
     flask.g.user = user
 
+
 @app.context_processor
 def inject_user():
     """Inject user in template."""
