@@ -29,11 +29,7 @@ babel.init_app(app, locale_selector=get_locale)
 @app.route("/", methods=["GET"])
 def index() -> str:
     """ Index render route """
-    return render_template(
-        '3-index.html',
-        home_title="Welcome to Holberton",
-        home_header="Hello world!"
-    )
+    return render_template('3-index.html')
 
 
 if __name__ == "__main__":
