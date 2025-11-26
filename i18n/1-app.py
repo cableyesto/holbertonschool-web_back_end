@@ -11,19 +11,13 @@ class Config:
     """ Configuration class of the flask app """
     LANGUAGES = ["en", "fr"]
     TZ = timezone("UTC")
-
-
-# def get_locale():
-#     """ Get the local from the Config class """
-#     return request.accept_languages.best_match(Config.LANGUAGES)
+    BABEL_DEFAULT_LOCALE = "en"
+    BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
 app = Flask(__name__)
-babel = Babel(
-    app,
-    default_locale=Config.LANGUAGES[0],
-    default_timezone=Config.TZ.zone
-)
+app.config.from_object(Config)
+babel = Babel(app)
 
 
 @app.route("/", methods=["GET"])
