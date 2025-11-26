@@ -25,6 +25,21 @@ class Config:
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
+def get_user(user_id):
+    """Get user."""
+    return users.get(user_id)
+
+
+app = Flask(__name__)
+app.config.from_object(Config)
+babel = Babel(app)
+"""
+For Flask-Babel v4.0
+babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
+"""
+
+
+@babel.localeselector
 def get_locale():
     """ Obtain the locale of the user """
     locale = request.args.get('locale')
@@ -46,12 +61,7 @@ def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-def get_user(user_id):
-    """Get user."""
-    return users.get(user_id)
-
-
-# @babel.timezoneselector
+@babel.timezoneselector
 def get_timezone():
     """Obtain the timezone of the user."""
     # Third option executed first because variable will be reallocated
@@ -75,12 +85,6 @@ def get_timezone():
         return timezone(final_tz_str)
     except pytz.exceptions.UnknownTimeZoneError:
         return timezone(final_tz_default)
-
-
-app = Flask(__name__)
-app.config.from_object(Config)
-babel = Babel(app)
-babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
 
 @app.before_request
