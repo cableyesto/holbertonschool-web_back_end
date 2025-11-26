@@ -33,9 +33,14 @@ def get_locale():
 
     user_id = request.args.get('login_as')
     if user_id:
-        user_id = int(user_id)
-        user = get_user(user_id)
-        return user.locale
+        try:
+            user_id = int(user_id)
+            user = get_user(user_id)
+            user_locale = user.get('locale')
+            if user_locale in app.config['LANGUAGES']:
+                return user_locale
+        except:
+            pass
 
     if request.accept_languages:
         return Config.BABEL_DEFAULT_LOCALE
