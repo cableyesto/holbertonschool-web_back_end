@@ -23,13 +23,13 @@ def get_locale():
 app = Flask(__name__)
 app.config.from_object(Config)
 babel = Babel(app)
-babel.init_app(locale_selector=get_locale)
+babel.init_app(app, locale_selector=get_locale)
 
 
 @app.route("/", methods=["GET"])
 def index() -> str:
     """ Index render route """
-    return render_template('1-index.html')
+    return render_template('2-index.html')
 
 
 if __name__ == "__main__":
