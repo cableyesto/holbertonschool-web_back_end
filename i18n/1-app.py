@@ -19,7 +19,12 @@ class Config:
 
 
 app = Flask(__name__)
-babel = Babel(app, locale_selector=Config.LANGUAGES[0], timezone_selector=Config.TZ)
+babel = Babel(
+    app,
+    default_locale=Config.LANGUAGES[0],
+    default_timezone=Config.TZ.zone
+)
+
 
 @app.route("/", methods=["GET"])
 def index() -> str:
