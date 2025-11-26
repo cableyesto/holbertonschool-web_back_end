@@ -72,8 +72,7 @@ def get_timezone():
         final_tz_str = timezone
 
     try:
-        final_tz = timezone(final_tz_str)
-        return final_tz
+        return timezone(final_tz_str)
     except pytz.exceptions.UnknownTimeZoneError:
         return timezone(final_tz_default)
 
