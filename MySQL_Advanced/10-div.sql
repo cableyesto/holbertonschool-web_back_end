@@ -10,13 +10,11 @@ CREATE FUNCTION SafeDiv(
 RETURNS DOUBLE
 DETERMINISTIC
 BEGIN
-    DECLARE result FLOAT;
     IF b = 0 THEN
-        SET result = 0;
-    ELSE
-        SET result = CAST(a / b AS DOUBLE);
+        RETURN 0;
     END IF;
-    RETURN (result);
+
+    RETURN a / b + 0.0;
 END;
 //
 
