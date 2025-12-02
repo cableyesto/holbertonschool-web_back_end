@@ -7,14 +7,14 @@ CREATE FUNCTION SafeDiv(
     a INT,
     b INT
 )
-RETURNS DOUBLE
+RETURNS FLOAT
 DETERMINISTIC
 BEGIN
     IF b = 0 THEN
         RETURN 0;
     END IF;
 
-    RETURN a / b + 0.0;
+    RETURN a / b;
 END;
 //
 
