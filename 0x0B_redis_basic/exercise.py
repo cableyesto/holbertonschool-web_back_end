@@ -75,3 +75,25 @@ class Cache:
             """Lambda function"""
             return int(x)
         self.get(key, fn)
+
+
+def replay(func_name: str):
+    """Replay function of history history of calls."""
+    if not func_name:
+        return None
+    con = redis.Redis()
+    full_name = func_name.__qualname__
+    count = int(con.get(full_name))
+    inputs = con.lrange(
+        "{}:inputs".format(full_name), 0, -1
+    )
+    outputs = con.lrange(
+        "{}:outputs".format(full_name), 0, -1
+    )
+    str_ins = [item.decode('utf-8') for item in inputs]
+    str_outs = [item.decode('utf-8') for item in outputs]
+    print("Cache.store was called {} times:".format(count))
+    for ins, outs in zip(str_ins, str_outs):
+        print(
+            "Cache.store(*{}) -> {}".format(str(ins), str(outs))
+        )
