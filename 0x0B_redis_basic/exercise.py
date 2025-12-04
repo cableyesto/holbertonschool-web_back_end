@@ -17,6 +17,17 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """Call inputs and outputs decorators."""
+    @wraps(method)
+    def wrapper(self, *args):
+        self._redis.rpush("{}:inputs".format(method.__qualname__), str(args))
+        res = method(self, *args)
+        self._redis.rpush("{}:outputs".format(method.__qualname__), res)
+        return res
+    return wrapper
+
+
 class Cache:
     """Cache abstraction class for the redis module."""
     def __init__(self):
@@ -24,6 +35,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Create a store for the cache."""
