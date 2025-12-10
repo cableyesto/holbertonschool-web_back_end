@@ -4,14 +4,20 @@ const Utils = require("./utils");
 const sendPaymentRequestToApi = require("./3-payment");
 
 describe("sendPaymentRequestToApi", function() {
-  it("should verify spy is working", function () {
-    const spy = sinon.spy(Utils, "calculateNumber");
+  it("should verify stub is working", function () {
+    const stub = sinon.stub(Utils, "calculateNumber");
+    const logSpy = sinon.spy(console, "log");
 
+    stub.returns(10);
     sendPaymentRequestToApi(100, 20);
 
-    expect(spy.calledOnce).to.equal(true);
-    expect(spy.calledWith("SUM", 100, 20)).to.equal(true);
+    expect(stub.calledOnce).to.equal(true);
+    expect(stub.calledWith("SUM", 100, 20)).to.equal(true);
 
-    spy.restore();
+    expect(logSpy.calledOnce).to.equal(true);
+    expect(logSpy.calledWith("The total is: 10")).to.equal(true);
+
+    stub.restore();
+    logSpy.restore();
   })
 });
