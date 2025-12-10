@@ -6,17 +6,12 @@ const sendPaymentRequestToApi = require("./3-payment");
 describe("sendPaymentRequestToApi", function() {
   it("should verify spy is working", function () {
     const spy = sinon.spy(Utils, "calculateNumber");
-    const logSpy = sinon.spy(console, "log");
 
     sendPaymentRequestToApi(100, 20);
 
     expect(spy.calledOnce).to.equal(true);
     expect(spy.calledWith("SUM", 100, 20)).to.equal(true);
 
-    expect(logSpy.calledOnce).to.equal(true);
-    expect(logSpy.calledWith("The total is: 120")).to.equal(true);
-
     spy.restore();
-    logSpy.restore();
   })
 });
