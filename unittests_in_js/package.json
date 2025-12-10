@@ -8,8 +8,10 @@
   },
   "author": "",
   "license": "UNLICENSED",
+  "type": "commonjs",
   "devDependencies": {
     "chai": "^6.2.1",
-    "mocha": "^11.7.5"
+    "mocha": "^11.7.5",
+    "sinon": "^21.0.0"
   }
 }
