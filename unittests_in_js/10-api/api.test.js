@@ -82,24 +82,29 @@ describe("Available payments page", function() {
       method: "GET"
     };
   });
-  it("should return status code 200 for `GET /cart/available_payments`", function() {
+  it("should return status code 200 for `GET /available_payments`", function() {
     request(options, function(error, response, body) {
       expect(response.statusCode).to.equal(200);
     });
   });
-  it("should return status code 404 for `GET /cart/available_payments/test`", function() {
+  it("should return status code 404 for `GET /available_payments/test`", function() {
     options.uri += '/test';
     request(options, function(error, response, body) {
       expect(response.statusCode).to.equal(404);
     });
   });
-  it("should return correct body for `GET /cart/available_payments`", function() {
-    expectedObj = `{"payment_methods":{"credit_cards":true,"paypal":false}}`;
+  it("should return correct body for `GET /available_payments`", function() {
+    const expectedObj = {
+      payment_methods: {
+        credit_cards: true,
+        paypal: false
+      }
+    };
     request(options, function(error, response, body) {
-      expect(body).to.deep.equal(expectedObj);
+      expect(JSON.parse(body)).to.deep.equal(expectedObj);
     });
   });
-  it("should return status code 404 for `POST /cart/available_payments`", function() {
+  it("should return status code 404 for `POST /available_payments`", function() {
     options.method = "POST";
     request(options, function(error, response, body) {
       expect(response.statusCode).to.equal(404);
